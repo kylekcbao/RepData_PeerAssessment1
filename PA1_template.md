@@ -1,13 +1,6 @@
----
-title: "Peer Assessment 1"
-author: "Kyle KC Bao"
-date: "February 18, 2016"
-output:
-  html_document:
-    fig_width: 5
-    fig_height: 5
-    keep_md: yes
----
+# Peer Assessment 1
+Kyle KC Bao  
+February 18, 2016  
 
 ### Loading and preprocessing the data
 
@@ -17,7 +10,8 @@ Show any code that is needed to
 
 2. Process/transform the data (if necessary) into a format suitable for your analysis
 
-```{r}
+
+```r
 ## Code for reading in the dataset and/or processing the data
 if (!file.exists("activity.zip")) {
   download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip",
@@ -37,7 +31,8 @@ the dataset.
 
 1. Make a histogram of the total number of steps taken each day
 
-```{r}
+
+```r
 ## Histogram of the total number of steps taken each day
 daily.steps <- aggregate(data$steps, by = list(data$date),
                          FUN = sum, na.rm = TRUE)
@@ -46,19 +41,34 @@ with(daily.steps, hist(steps, breaks = 10, xlab = "Number of Steps",
                        main = "Total Number of Steps Taken Each Day"))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)
+
 2. Calculate and report the **mean** and **median** total number of steps taken per day
 
-```{r}
+
+```r
 ## Mean and median number of steps taken each day
 mean(daily.steps$steps) # mean
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(daily.steps$steps) # median
+```
+
+```
+## [1] 10395
 ```
 
 ### What is the average daily activity pattern?
 
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r}
+
+```r
 ## Time series plot of the average number of steps taken
 average.steps <- aggregate(data$steps, by = list(data$interval),
                            FUN = mean, na.rm = TRUE)
@@ -69,11 +79,18 @@ with(average.steps, plot(interval, steps, type = "l",
                          main = "Average Daily Activity Pattern"))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)
+
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r}
+
+```r
 ## The 5-minute interval that, on average, contains the maximum number of steps
 average.steps[which.max(average.steps$steps), "interval"]
+```
+
+```
+## [1] 835
 ```
 
 ### Imputing missing values
@@ -84,14 +101,20 @@ bias into some calculations or summaries of the data.
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
 
-```{r}
+
+```r
 ## Total missing data
 sum(is.na(data$steps))
 ```
 
+```
+## [1] 2304
+```
+
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
-```{r}
+
+```r
 ## Function to change NA values to average steps for that interval of the day
 InputMissing <- function(x) {
   idx <- which(is.na(x$steps))
@@ -105,7 +128,8 @@ InputMissing <- function(x) {
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r}
+
+```r
 ## Create a new dataset that is equal to the original dataset but with the 
 ## missing data filled in.
 data.new <- InputMissing(data)
@@ -113,19 +137,51 @@ data.new <- InputMissing(data)
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r}
+
+```r
 ## Histogram of the total number of steps taken each day
 daily.steps.new <- aggregate(data.new$steps, by = list(data.new$date), 
                              FUN = sum, na.rm = TRUE)
 colnames(daily.steps.new) <- c("date", "steps")
 with(daily.steps.new, hist(steps, breaks = 10, xlab = "Number of Steps", 
                            main = "Total Number of Steps Taken Each Day"))
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)
+
+```r
 mean(daily.steps.new$steps) # new mean
-mean(daily.steps.new$steps) - mean(daily.steps$steps) # difference in mean
-median(daily.steps.new$steps) # new median
-median(daily.steps.new$steps) - median(daily.steps$steps) # difference in median
+```
 
+```
+## [1] 10766.19
+```
+
+```r
+mean(daily.steps.new$steps) - mean(daily.steps$steps) # difference in mean
+```
+
+```
+## [1] 1411.959
+```
+
+```r
+median(daily.steps.new$steps) # new median
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+median(daily.steps.new$steps) - median(daily.steps$steps) # difference in median
+```
+
+```
+## [1] 371.1887
+```
+
+```r
 # Values differ from first part of assignment.
 # Inputting missing data increases the estimates of the total daily number of
 # steps.
@@ -138,7 +194,8 @@ the dataset with the filled-in missing values for this part.
 
 1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r}
+
+```r
 ## Function to create factor variable based on weekday/weekend in dataset
 WhichDay <- function(x) {
   results <- vector()
@@ -161,7 +218,8 @@ data.new$day <- factor(data.new$day, levels = c("Weekday", "Weekend"),
 
 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using **simulated data**:
 
-```{r}
+
+```r
 ## Creates time series plot comparing average steps across weekday/weekend days. 
 average.steps.new <- aggregate(data.new$steps, 
                                by = list(data.new$interval, data.new$day), 
@@ -169,10 +227,19 @@ average.steps.new <- aggregate(data.new$steps,
 colnames(average.steps.new) <- c("interval", "day", "steps")
 
 require(lattice)
+```
+
+```
+## Loading required package: lattice
+```
+
+```r
 xyplot(steps~interval | day, data = average.steps.new,
        type = "l",
        xlab = "Interval",
        ylab = "Number of Steps",
        layout = c(1,2))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)
 
